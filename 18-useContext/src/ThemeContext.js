@@ -1,19 +1,29 @@
-import React, { createContext, useState, useContext } from "react";
+import React, { createContext, useReducer, useContext } from "react";
 
 // Provide a default value with dummy functions
-const ThemeContext =createContext() ;
+const ThemeContext = createContext();
 
-export const ThemeProvider= ({
-  children,
-}) => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+function reducer(state, action) {
+  console.log(state, action);
+  switch (action.type) {
+    case "toggle":
+      return { isDarkMode: !state.isDarkMode };
+    default:
+      return state;
+  }
+}
+
+const initialState = { isDarkMode: false };
+
+export const ThemeProvider = ({children}) => {
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   const toggleTheme = () => {
-    setIsDarkMode((prevMode) => !prevMode);
+    dispatch({ type: "toggle" });
   };
 
   return (
-    <ThemeContext.Provider value={{ isDarkMode, toggleTheme }}>
+    <ThemeContext.Provider value={{ isDarkMode: state.isDarkMode, toggleTheme }}>
       {children}
     </ThemeContext.Provider>
   );
